@@ -7,24 +7,25 @@ Things you may want to cover:
 * Ruby version 2.6
 
 * Database creation
-	`
+	```
 		rake db:create
-	`
+	```
+
 * Database initialization
-	`
+	```
 		rake db:migrate
 		rake db:seed
-	`
+	```
 
 * How to run the test suite
-	`
+	```
 		rake spec
-	`
+	```
 
 * Deployment instructions
-	`
+	```
 		bundle install
-	`
+	```
 
 
 ## API manual
@@ -32,6 +33,7 @@ Things you may want to cover:
 ###Showing stats
 <p>This endpoint will send back an array oof what each customer does of the format: `customer_id customer_first_name category_id category_name number_purchased`.</p>
 ```
+
 GET    /v1/orders/show_stats(.:format)
 	request parameters:  {
 		:format => :json
