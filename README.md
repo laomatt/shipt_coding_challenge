@@ -2,7 +2,32 @@
 
 This application is an API for getings and placing orders to a database.
 
-Things you may want to cover:
+## Additional questions
+
+<p>
+	We want to give customers the ability to create lists of products for a one-click ordering of bulk items. How would you design the tables, what are the pros and cons of your approach?
+	<br>
+	<br>
+	<b>Answer:</b>  I designed the order table to have a 'products' column, whicho holds a json object that is parsable via ruby.  I decided not to go with a join table, because of scalability, it makes no sense to have a join table that will map 1 to 1 with the order table (as orders even though orders may share products, they will never share items in that join table).  That way when an order is created, a customer may place as many products (and quantities) for each of those products by entering one json string (that is compiled on the client, and stored in the session, or cookie), as opposed to creating join table rows for each product desired.  The downside of this approach would be generally slower queries when tabulating stastics of product orders, there are new sql tools made for parsing JSON, but they are difficult to implement and do not garuntee a quicker turn around.
+</p>
+
+<p>
+	If Shipt knew the exact inventory of stores, and when facing a high traffic and limited supply of a particular item, how do you distribute the inventory among customers checking out?
+	<br>
+	<br>
+	<b>Answer:</b> I would distribute the inventory based on how much of the inventory is left, for example, the nintendo switch, or the newest iphone would be limited to a certain amount per customer to prevent inventory hoarding and reselling.  If the inventory is running out at a certain rate, then that amount (that each customer is limited to) would shrink. 
+</p>
+
+<p>
+	Ability to export the results of #5 to CSV.
+	<br>
+	<br>
+	
+	<b>Answer:</b> What is #5?  CSV manipulation would usually be done in the client.
+</p>
+
+
+## Configuration and setup
 
 * Ruby version 2.6
 
@@ -256,8 +281,6 @@ Things you may want to cover:
 
 <!-- TODO: CRUD for products -->
 
-What is #5?  CSV manipulation would usually be done in the client.
-```Ability to export the results of #5 to CSV.```
 
 ```
 	GET    /v1/products(.:format)         
