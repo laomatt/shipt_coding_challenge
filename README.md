@@ -30,7 +30,7 @@ Things you may want to cover:
 
 ## API manual
 
-###Showing stats
+### Showing stats
 <p>This endpoint will send back an array oof what each customer does of the format: `customer_id customer_first_name category_id category_name number_purchased`.</p>
 ```
 
@@ -69,7 +69,7 @@ GET    /v1/orders/show_stats(.:format)
 ```
 
 
-###Showing list or current orders
+### Showing list or current orders
 <p>This endpoint will send back an array of all current orders.</p>
 ```
 GET    /v1/orders(.:format)           
@@ -92,7 +92,7 @@ GET    /v1/orders(.:format)
 
 
 
-###Showing one order
+### Showing one order
 <p>This endpoint will send back an array oof what each customer does.</p>
 ```
 GET    /v1/orders/:id(.:format)       
@@ -122,7 +122,7 @@ GET    /v1/orders/:id(.:format)
 
 
 
-###Creating an order
+### Creating an order
 <p>This endpoint will create an order.</p>
 ```
 POST   /v1/orders(.:format)           
@@ -144,7 +144,7 @@ POST   /v1/orders(.:format)
 
 
 
-###Updating an order
+### Updating an order
 <p>This endpoint will update product quantity on an order, or remove a product from an order.</p>
 ```
 PATCH  /v1/orders/:id(.:format)       
@@ -168,7 +168,7 @@ PATCH  /v1/orders/:id(.:format)
 
 
 
-###Deleting an order
+### Deleting an order
 <p>This endpoint will delete an entire order.</p>
 ```
 DELETE /v1/orders/:id(.:format)       
