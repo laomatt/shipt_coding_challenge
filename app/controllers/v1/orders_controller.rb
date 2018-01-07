@@ -15,10 +15,61 @@ class V1::OrdersController < ApplicationController
 
      respond_to do |format|
       format.json { render :json => {
-      	:code => 200, 
-      	:status => 'Orders listed.',
-      	:orders => results
-      	} 
+        :code => 200, 
+        :status => 'Orders listed.',
+        :orders => results
+        } 
+      }
+    end
+  end
+
+  # GET v1/order/show_product_stats
+  def show_product_stats
+    increment = show_product_stats_params[:increment]
+    start_date_total = show_product_stats_params[:start]
+    end_date_total = show_product_stats_params[:end]
+
+    dates = []
+    # break down start_date_total to end_date_total by the choosen increment
+    current_date = start_date_total.to_date
+    while current_date < end_date_total.to_date
+      this_inc = {:products_sold => {}}
+      this_inc[:start] = current_date
+      if increment == 'day'
+        current_date = current_date + 1.day
+      elsif increment == 'week'
+        current_date = current_date + 1.week
+      elsif increment == 'month'
+        current_date = current_date + 1.month
+      end
+      this_inc[:end] = current_date
+
+      dates << this_inc
+    end
+
+
+    orders = Order.where("created_at BETWEEN ? and ?", start_date_total, end_date_total)
+    orders.each do |ord|
+      products_sold = {}
+      prods = JSON.parse(ord.products)
+      prods.each do |product_id,quantity|
+        # go through each product
+        # find the key in the date hash where the order belongs to
+        this_date = dates.detect { |e| e[:start].to_date >= ord.created_at.to_date }
+        if this_date[:products_sold][product_id].nil?
+          this_date[:products_sold][product_id] = 0
+        end
+
+        this_date[:products_sold][product_id] += quantity
+      end
+    end
+
+    respond_to do |format|
+      format.json { render :json => {
+        :code => 200, 
+        :status => 'Status shown.',
+        :orders => dates
+        } 
       }
     end
   end
@@ -30,10 +81,26 @@ class V1::OrdersController < ApplicationController
         format.json { render :json => {
         	:code => 200, 
         	:status => 'Order found.',
-        	:order => { :id => @order.id, :status => @order.currently, :products => @order.product_list }
+        	:order => { :id => @order.id, :customer_id => @order.customer_id, :status => @order.currently, :products => @order.product_list }
         	} 
         }
       end
+    end
+  end
+
+  def customer_report
+    @customer = Customer.find(params[:customer_id])
+    orders = []
+    @customer.orders.each do |order|
+      orders << { :id => order.id, :customer_id => order.customer_id, :status => order.currently, :products => order.product_list }
+    end
+    respond_to do |format|
+        format.json { render :json => {
+          :code => 200, 
+          :status => 'Orders found.',
+          :orders => orders
+          } 
+        }
     end
   end
 
@@ -132,6 +199,10 @@ class V1::OrdersController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_order
       @order = Order.find(params[:id])
+    end
+
+    def show_product_stats_params
+      params.require(:options).permit(:start, :end, :increment)
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

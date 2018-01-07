@@ -184,7 +184,7 @@ Things you may want to cover:
 ```
 	DELETE /v1/orders/:id(.:format)       
 	parameters:  {
-		:format => [:json],
+		:format => :json,
 		:id => order ID,
 	}
 
@@ -196,7 +196,66 @@ Things you may want to cover:
 
 ```
 
+
+### Obtaining a product incremental sales report
+<p># An API endpoint that accepts a date range and a day, week, or month and returns a breakdown of products sold by quantity per day/week/month.</p>
+
+```
+	GET    /v1/orders/show_product_stats(.:format)
+
+		parameters:  { 
+        :format => :json, 
+        :options => 
+          {
+            :start => Date.today - 20.days, 
+            :end => Date.today + 20.days, 
+            :increment => 'week'
+          }
+        }
+
+		eg. response:
+			{
+				"code"=>200, 
+				"status"=>"Status shown.", 
+				"orders"=>
+					[
+						{"products_sold"=>{}, "start"=>"2017-12-17", "end"=>"2017-12-24"}, 
+						{"products_sold"=>{}, "start"=>"2017-12-24", "end"=>"2017-12-31"}, 
+						{"products_sold"=>{}, "start"=>"2017-12-31", "end"=>"2018-01-07"}, 
+						{"products_sold"=>{"1"=>9, "2"=>3, "3"=>3}, "start"=>"2018-01-07", "end"=>"2018-01-14"}, 
+						{"products_sold"=>{}, "start"=>"2018-01-14", "end"=>"2018-01-21"}, 
+						{"products_sold"=>{}, "start"=>"2018-01-21", "end"=>"2018-01-28"}
+					]
+			}
+
+```
+
+
+### Obtaining a report for a customer
+<p>Get orders for a customer</p>
+```
+		GET    /v1/orders/customer_report(.:format)
+
+			parameters: {
+				:format => :json, 
+				:customer_id => 1
+			}
+
+			eg. response:
+				{
+					"code"=>200, 
+					"status"=>"Orders found.", 
+					"orders"=>
+						[
+							{"id"=>2, "status"=>"new", "products"=>{"1"=>3, "2"=>1, "3"=>1}}, 
+							{"id"=>3, "status"=>"new", "products"=>{"1"=>3, "2"=>1, "3"=>1}}
+						]
+					}
+```
 <!-- TODO: CRUD for products -->
+
+What is #5?  CSV manipulation would usually be done in the client.
+```Ability to export the results of #5 to CSV.```
 
 ```
 	GET    /v1/products(.:format)         

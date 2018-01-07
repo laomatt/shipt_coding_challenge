@@ -52,15 +52,43 @@ before(:each) do
       expect(resp["code"]).to eq 200
       expect(resp["status"]).to eq "Orders listed."
       resp["orders"].each { |e| 
-      	e.delete('created_at') 
-      	e.delete('updated_at') 
+        e.delete('created_at') 
+        e.delete('updated_at') 
       }
 
       expect(resp["orders"]).to eq Order.all.to_a.map { |e| e.attributes }.each { |e|
           e["status"] = Order.find(e['id']).currently 
-      		e.delete('created_at') 
-      		e.delete('updated_at') 
-      	}
+          e.delete('created_at') 
+          e.delete('updated_at') 
+        }
+    end
+  end
+
+  describe "GET #show_product_stats" do
+    it "displays product stats for given date range by a given increment" do
+      get :show_product_stats, { 
+        :format => :json, 
+        :options => 
+          {
+            :start => Date.today - 20.days, 
+            :end => Date.today + 20.days, 
+            :increment => 'week'
+          }
+        }
+      resp = JSON.parse(response.body)
+      # byebug
+      expect(resp["code"]).to eq 200
+      expect(resp["status"]).to eq "Status shown."
+    end
+  end
+
+  describe "GET #customer_report" do 
+    it "obtain info in a particular customer" do 
+      get :customer_report, {:format => :json, :customer_id => 1}
+      resp = JSON.parse(response.body)
+      expect(resp["code"]).to eq 200
+      expect(resp["status"]).to eq "Orders found."
+      expect(resp["orders"]).to eq [{"id"=>2, "customer_id"=>1, "status"=>"new", "products"=>{"1"=>3, "2"=>1, "3"=>1}}, {"id"=>3, "customer_id"=>1, "status"=>"new", "products"=>{"1"=>3, "2"=>1, "3"=>1}}]
     end
   end
 
@@ -75,7 +103,6 @@ before(:each) do
 
       expect(response.code).to eq "200"
       resp = JSON.parse(response.body)
-      # byebug
       expect(resp["code"]).to eq 200
       expect(resp["status"]).to eq "Order created."
   	end
