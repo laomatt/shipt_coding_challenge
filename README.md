@@ -233,6 +233,7 @@ Things you may want to cover:
 
 ### Obtaining a report for a customer
 <p>Get orders for a customer</p>
+
 ```
 		GET    /v1/orders/customer_report(.:format)
 
@@ -252,6 +253,7 @@ Things you may want to cover:
 						]
 					}
 ```
+
 <!-- TODO: CRUD for products -->
 
 What is #5?  CSV manipulation would usually be done in the client.
