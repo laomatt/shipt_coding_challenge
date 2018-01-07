@@ -32,9 +32,11 @@ Things you may want to cover:
 
 ### Showing stats
 <p>This endpoint will send back an array oof what each customer does of the format: `customer_id customer_first_name category_id category_name number_purchased`.</p>
+
 ```
 
-GET    /v1/orders/show_stats(.:format)
+	GET    /v1/orders/show_stats(.:format)
+
 	request parameters:  {
 		:format => :json
 	}
@@ -71,8 +73,10 @@ GET    /v1/orders/show_stats(.:format)
 
 ### Showing list or current orders
 <p>This endpoint will send back an array of all current orders.</p>
+
 ```
-GET    /v1/orders(.:format)           
+	GET    /v1/orders(.:format)
+
 	parameters:  {
 		:format => :json
 	}
@@ -94,8 +98,10 @@ GET    /v1/orders(.:format)
 
 ### Showing one order
 <p>This endpoint will send back an array oof what each customer does.</p>
+
 ```
-GET    /v1/orders/:id(.:format)       
+	GET    /v1/orders/:id(.:format) 
+
 	parameters:  {
 		:format => :json,
 		:id => order ID
@@ -124,8 +130,10 @@ GET    /v1/orders/:id(.:format)
 
 ### Creating an order
 <p>This endpoint will create an order.</p>
+
 ```
-POST   /v1/orders(.:format)           
+	POST   /v1/orders(.:format) 
+
 	parameters:  {
 		:format => [:json],
 		:order => {
@@ -146,8 +154,10 @@ POST   /v1/orders(.:format)
 
 ### Updating an order
 <p>This endpoint will update product quantity on an order, or remove a product from an order.</p>
+
 ```
-PATCH  /v1/orders/:id(.:format)       
+	PATCH  /v1/orders/:id(.:format) 
+
 	parameters:  {
 		:format => [:json],
 		:id => order ID,
@@ -170,8 +180,9 @@ PATCH  /v1/orders/:id(.:format)
 
 ### Deleting an order
 <p>This endpoint will delete an entire order.</p>
+
 ```
-DELETE /v1/orders/:id(.:format)       
+	DELETE /v1/orders/:id(.:format)       
 	parameters:  {
 		:format => [:json],
 		:id => order ID,
@@ -188,50 +199,57 @@ DELETE /v1/orders/:id(.:format)
 <!-- TODO: CRUD for products -->
 
 ```
-GET    /v1/products(.:format)         
+	GET    /v1/products(.:format)         
 	parameters:  {
 		:format => [:json],
 		:order => {}
 	}
 
-POST   /v1/products(.:format)         
+
+	POST   /v1/products(.:format)         
 	parameters:  {
 		:format => [:json],
 		:order => {}
 	}
 
-GET    /v1/products/new(.:format)     
+
+	GET    /v1/products/new(.:format)     
 	parameters:  {
 		:format => [:json],
 		:order => {}
 	}
 
-GET    /v1/products/:id/edit(.:format)
+
+	GET    /v1/products/:id/edit(.:format)
 	parameters:  {
 		:format => [:json],
 		:product => {}
 	}
 
-GET    /v1/products/:id(.:format)     
+
+	GET    /v1/products/:id(.:format)     
 	parameters:  {
 		:format => [:json],
 		:product => {}
 	}
 
-PATCH  /v1/products/:id(.:format)     
-	parameters:  {
-		:format => [:json],
-		:product => {}
-	}
-PUT    /v1/products/:id(.:format)     
-	parameters:  {
-		:format => [:json],
-		:product => {}
-	}
-DELETE /v1/products/:id(.:format)     
+
+	PATCH  /v1/products/:id(.:format)     
 	parameters:  {
 		:format => [:json],
 		:product => {}
 	}
 
-	```
+	PUT    /v1/products/:id(.:format)     
+	parameters:  {
+		:format => [:json],
+		:product => {}
+	}
+
+	DELETE /v1/products/:id(.:format)     
+	parameters:  {
+		:format => [:json],
+		:product => {}
+	}
+
+```
