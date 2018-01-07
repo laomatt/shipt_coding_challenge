@@ -50,12 +50,14 @@ before(:each) do
       expect(response.code).to eq "200"
       resp = JSON.parse(response.body)
       expect(resp["code"]).to eq 200
-      expect(resp["status"]).to eq "Orders Listed."
+      expect(resp["status"]).to eq "Orders listed."
       resp["orders"].each { |e| 
       	e.delete('created_at') 
       	e.delete('updated_at') 
       }
-      expect(resp["orders"]).to eq Order.all.to_a.map { |e| e.attributes }.each { |e| 
+
+      expect(resp["orders"]).to eq Order.all.to_a.map { |e| e.attributes }.each { |e|
+          e["status"] = Order.find(e['id']).currently 
       		e.delete('created_at') 
       		e.delete('updated_at') 
       	}
@@ -71,10 +73,11 @@ before(:each) do
 			}.to_json
       post :create, {:format => :json, :order => {:customer_id => @customer1.id, :products => this_prods_mult}}
 
-			expect(response.code).to eq "200"
+      expect(response.code).to eq "200"
       resp = JSON.parse(response.body)
+      # byebug
       expect(resp["code"]).to eq 200
-      expect(resp["status"]).to eq "Order Created."
+      expect(resp["status"]).to eq "Order created."
   	end
 
     it "does not create a new order with invalid params" do
@@ -98,6 +101,7 @@ before(:each) do
    	it "will show a current order" do
       get :show, {:format => :json, :id => @order_valid.id }
       resp = JSON.parse(response.body)
+      # byebug
       expect(resp["code"]).to eq 200
       expect(resp["status"]).to eq "Order found."
       expect(resp["order"]["id"]).to eq @order_valid.id
@@ -117,26 +121,37 @@ before(:each) do
   	it "updates an existing order" do
   		post :update, {
   			:format => :json, 
-  			:id => @order_valid.id, 
+  			:id => @order_valid.id,
+        :type => 'update', 
   			:product => { 
   				:product_id => @moana.id, 
   				:quantity => 50 
   			}
   		}
+
       resp = JSON.parse(response.body)
+      # byebug
       expect(resp["code"]).to eq 200
-      expect(resp["status"]).to eq "Order Updated."
+      expect(resp["status"]).to eq "Order updated."
   	end
 
   	it "sends back error message if no orders found" do
-  		post :update, {:format => :json, :id => 55, :product => { :product_id => @zootopia.id, :quantity => 500 }}
+  		post :update, {
+        :format => :json, 
+        :id => 55, 
+        :type => 'delete', 
+        :product => { 
+          :product_id => @zootopia.id, 
+          :quantity => 500 
+          }
+        }
       resp = JSON.parse(response.body)
       expect(resp["code"]).to eq 404
       expect(resp["status"]).to eq "Order not found."
   	end
 
   	it "sends back error message if product ids are bad" do
-  		post :update, {:format => :json, :id => @order_valid.id, :product => { :product_id => 55, :quantity => 500 }}
+  		post :update, {:format => :json, :id => @order_valid.id, :type => 'update', :product => { :product_id => 55, :quantity => 500 }}
       resp = JSON.parse(response.body)
       expect(resp["code"]).to eq 409
       expect(resp["status"]).to eq "You have submitted invalid parameters."
@@ -165,6 +180,8 @@ before(:each) do
   	it 'send back stats' do
 	  	get :show_stats, {:format => :json }
       resp = JSON.parse(response.body)
+      # byebug
+
       expect(resp["code"]).to eq 200
       expect(resp["status"]).to eq "Stats found."
       expect(resp["body"]).to eq ["1 customer 3 movie 8.0", "1 customer 1 entertainment 10.0", "1 customer 4 stienbeck 2.0", "1 customer 2 book 2.0", "2 customer2 3 movie 4.0", "2 customer2 1 entertainment 5.0", "2 customer2 4 stienbeck 1.0", "2 customer2 2 book 1.0"]

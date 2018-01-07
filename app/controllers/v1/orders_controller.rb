@@ -6,11 +6,18 @@ class V1::OrdersController < ApplicationController
 	def index
     @orders = Order.all
 
+    results = []
+    @orders.each do |ord|
+      ord_hash = ord.attributes
+      ord_hash[:status] = ord.currently
+      results << ord_hash
+    end
+
      respond_to do |format|
       format.json { render :json => {
       	:code => 200, 
-      	:status => 'Orders Listed.',
-      	:orders => @orders
+      	:status => 'Orders listed.',
+      	:orders => results
       	} 
       }
     end
@@ -32,7 +39,11 @@ class V1::OrdersController < ApplicationController
 
   # GET v1/show_stats
   def show_stats
-  	stats = Order.statistics
+    if params[:options]
+    	stats = Order.statistics(stat_options)
+    else
+      stats = Order.statistics({})
+    end
   	respond_to do |format|
         format.json { render :json => {
         	:code => 200, 
@@ -51,7 +62,7 @@ class V1::OrdersController < ApplicationController
 			if @order.save
         format.json { render :json => {
         	:code => 200, 
-        	:status => 'Order Created.'
+        	:status => 'Order created.'
         	} 
         }
       else
@@ -68,14 +79,17 @@ class V1::OrdersController < ApplicationController
 
   # PATCH/PUT v1/orders/1
   def update
-  	prods = @order.product_list
-  	prods[product_params[:product_id]] = product_params[:quantity].to_i
-  	@order.products = prods.to_json
+    if params[:type] == 'delete'
+      @order.remove_product(product_params[:product_id])
+    else
+      @order.add_product(product_params[:product_id],product_params[:quantity].to_f)
+    end
+
     respond_to do |format|
       if @order.save
         format.json { render :json => { 
         	:code => 200,
-        	:status => 'Order Updated.'
+        	:status => 'Order updated.'
         	} 
         }
       else
@@ -123,6 +137,10 @@ class V1::OrdersController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def order_params
       params.require(:order).permit(:products, :customer_id)
+    end
+
+    def stat_options
+      params.require(:options).permit(:start, :end)
     end
 
     def product_params
