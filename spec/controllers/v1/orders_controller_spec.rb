@@ -157,7 +157,6 @@ before(:each) do
   		}
 
       resp = JSON.parse(response.body)
-      # byebug
       expect(resp["code"]).to eq 200
       expect(resp["status"]).to eq "Order updated."
   	end
